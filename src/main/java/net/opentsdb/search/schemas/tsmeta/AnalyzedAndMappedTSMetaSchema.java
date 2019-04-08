@@ -163,9 +163,9 @@ public class AnalyzedAndMappedTSMetaSchema extends TSMetaSchema {
     
     final StringBuilder uri = new StringBuilder(es.host())
       .append("/")
-      .append(es.index())
-      .append("/")
       .append(doc_type)
+      .append("/")
+      .append("_doc")
       .append("/")
       .append(meta.getTSUID());
     if (es.asyncReplication()) {
@@ -173,7 +173,9 @@ public class AnalyzedAndMappedTSMetaSchema extends TSMetaSchema {
     }
     
     final HttpPost post = new HttpPost(uri.toString());
-    post.setEntity(new ByteArrayEntity(TSMetaAugment.serializeToBytes(meta)));
+    ByteArrayEntity entity = new ByteArrayEntity(TSMetaAugment.serializeToBytes(meta));
+    entity.setContentType("application/json");
+    post.setEntity(entity);
     es.httpClient().execute(post, new AsyncCB());
     return result;
   }

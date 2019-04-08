@@ -119,9 +119,9 @@ public abstract class UIDMetaSchema {
     
     final StringBuilder uri = new StringBuilder(es.host())
       .append("/")
-      .append(es.index())
-      .append("/")
       .append(doc_type)
+      .append("/")
+      .append("_doc")
       .append("/")
       .append(meta.getUID());
     if (es.asyncReplication()) {
@@ -129,7 +129,9 @@ public abstract class UIDMetaSchema {
     }
     
     final HttpPost post = new HttpPost(uri.toString());
-    post.setEntity(new ByteArrayEntity(JSON.serializeToBytes(meta)));
+    ByteArrayEntity entity = new ByteArrayEntity(JSON.serializeToBytes(meta));
+    entity.setContentType("application/json");
+    post.setEntity(entity);
     es.httpClient().execute(post, new AsyncCB());
     return result;
   }
@@ -188,9 +190,9 @@ public abstract class UIDMetaSchema {
     
     final StringBuilder uri = new StringBuilder(es.host())
       .append("/")
-      .append(es.index())
-      .append("/")
       .append(doc_type)
+      .append("/")
+      .append("_doc")
       .append("/")
       .append(meta.getUID());
     if (es.asyncReplication()) {

@@ -294,7 +294,7 @@ public final class ElasticSearch extends SearchPlugin {
     final Deferred<SearchQuery> result = new Deferred<SearchQuery>();
 
     final StringBuilder uri = new StringBuilder(host);
-    uri.append("/").append(index).append("/");
+    uri.append("/");
     switch(query.getType()) {
       case TSMETA:
       case TSMETA_SUMMARY:
@@ -325,7 +325,9 @@ public final class ElasticSearch extends SearchPlugin {
     qs.put("query_string", query_string);
 
     final HttpPost post = new HttpPost(uri.toString());
-    post.setEntity(new ByteArrayEntity(JSON.serializeToBytes(body)));
+    ByteArrayEntity entity = new ByteArrayEntity(JSON.serializeToBytes(body));
+    entity.setContentType("application/json");
+    post.setEntity(entity);
 
     http_client.execute(post, new SearchCB(query, result));
     queries_executed.increment();

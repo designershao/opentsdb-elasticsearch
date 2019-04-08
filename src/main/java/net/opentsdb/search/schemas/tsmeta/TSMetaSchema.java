@@ -167,9 +167,9 @@ public abstract class TSMetaSchema {
     
     final StringBuilder uri = new StringBuilder(es.host())
       .append("/")
-      .append(es.index())
-      .append("/")
       .append(doc_type)
+      .append("/")
+      .append("_doc")
       .append("/")
       .append(meta.getTSUID());
     if (es.asyncReplication()) {
@@ -177,7 +177,9 @@ public abstract class TSMetaSchema {
     }
     
     final HttpPost post = new HttpPost(uri.toString());
-    post.setEntity(new ByteArrayEntity(JSON.serializeToBytes(meta)));
+    ByteArrayEntity entity = new ByteArrayEntity(JSON.serializeToBytes(meta));
+    entity.setContentType("application/json");
+    post.setEntity(entity);
     es.httpClient().execute(post, new AsyncCB());
     return result;
   }
@@ -235,9 +237,9 @@ public abstract class TSMetaSchema {
     
     final StringBuilder uri = new StringBuilder(es.host())
       .append("/")
-      .append(es.index())
-      .append("/")
       .append(doc_type)
+      .append("/")
+      .append("_doc")
       .append("/")
       .append(tsuid);
     if (es.asyncReplication()) {
